@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Super Looper</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="https://fonts.googleapis.com/css?family=Quicksand:400,700&display=swap" rel="stylesheet" />
+    <link href="styles.css" rel="stylesheet" />
+
+    <!-- http://beatmaker.planetcode.fr -->
+    <!-- https://codepen.io/jend-codes/pen/eYZgeNL -->
+    <!-- https://github.com/Toww/step-sequencer -->
+    <!-- https://learningmusic.ableton.com/make-beats/make-beats.html -->
+  </head>
+  <body>
+
+    <header class="page">
+      <h1>Super Looper</h1>
+    </header>
+
+    <main class="handset">
+
+      <div class="sequencer">
+
+        <header>
+          <div class="transport">
+            <button id="start-stop" class="transport-control">
+              <img src="images/play.svg" />
+            </button>
+            <button id="rewind" class="transport-control">
+              <img src="images/rewind.svg" />
+            </button>
+          </div>
+          <div class="bpm">
+            <label class="bpm" for="bpm">100 BPM</label>
+            <input name="bpm" class="bpm" type="range" min="50" max="200" />
+          </div>
+        </header>
+
+        <div class="sequencer-button-grid">
+
+          <!-- Kick -->
+          <div class="col00" data-instrument="kick">Kick</div>
+          <button class="col01" data-instrument="kick" data-beat="1">1</button>
+          <button class="col02" data-instrument="kick" data-beat="2">2</button>
+          <button class="col03" data-instrument="kick" data-beat="3">3</button>
+          <button class="col04" data-instrument="kick" data-beat="4">4</button>
+          <button class="col05" data-instrument="kick" data-beat="5">5</button>
+          <button class="col06" data-instrument="kick" data-beat="6">6</button>
+          <button class="col07" data-instrument="kick" data-beat="7">7</button>
+          <button class="col08" data-instrument="kick" data-beat="8">8</button>
+          <button class="col09" data-instrument="kick" data-beat="9">9</button>
+          <button class="col10" data-instrument="kick" data-beat="10">10</button>
+          <button class="col11" data-instrument="kick" data-beat="11">11</button>
+          <button class="col12" data-instrument="kick" data-beat="12">12</button>
+          <button class="col13" data-instrument="kick" data-beat="13">13</button>
+          <button class="col14" data-instrument="kick" data-beat="14">14</button>
+          <button class="col15" data-instrument="kick" data-beat="15">15</button>
+          <button class="col16" data-instrument="kick" data-beat="16">16</button>
+
+          <!-- Snare -->
+          <div class="col00" data-instrument="snare">Snare</div>
+          <button class="col01" data-instrument="snare" data-beat="1">1</button>
+          <button class="col02" data-instrument="snare" data-beat="2">2</button>
+          <button class="col03" data-instrument="snare" data-beat="3">3</button>
+          <button class="col04" data-instrument="snare" data-beat="4">4</button>
+          <button class="col05" data-instrument="snare" data-beat="5">5</button>
+          <button class="col06" data-instrument="snare" data-beat="6">6</button>
+          <button class="col07" data-instrument="snare" data-beat="7">7</button>
+          <button class="col08" data-instrument="snare" data-beat="8">8</button>
+          <button class="col09" data-instrument="snare" data-beat="9">9</button>
+          <button class="col10" data-instrument="snare" data-beat="10">10</button>
+          <button class="col11" data-instrument="snare" data-beat="11">11</button>
+          <button class="col12" data-instrument="snare" data-beat="12">12</button>
+          <button class="col13" data-instrument="snare" data-beat="13">13</button>
+          <button class="col14" data-instrument="snare" data-beat="14">14</button>
+          <button class="col15" data-instrument="snare" data-beat="15">15</button>
+          <button class="col16" data-instrument="snare" data-beat="16">16</button>
+
+          <!-- Closed Hat -->
+          <div class="col00" data-instrument="hihat">Hi Hat</div>
+          <button class="col01" data-instrument="hihat" data-beat="1">1</button>
+          <button class="col02" data-instrument="hihat" data-beat="2">2</button>
+          <button class="col03" data-instrument="hihat" data-beat="3">3</button>
+          <button class="col04" data-instrument="hihat" data-beat="4">4</button>
+          <button class="col05" data-instrument="hihat" data-beat="5">5</button>
+          <button class="col06" data-instrument="hihat" data-beat="6">6</button>
+          <button class="col07" data-instrument="hihat" data-beat="7">7</button>
+          <button class="col08" data-instrument="hihat" data-beat="8">8</button>
+          <button class="col09" data-instrument="hihat" data-beat="9">9</button>
+          <button class="col10" data-instrument="hihat" data-beat="10">10</button>
+          <button class="col11" data-instrument="hihat" data-beat="11">11</button>
+          <button class="col12" data-instrument="hihat" data-beat="12">12</button>
+          <button class="col13" data-instrument="hihat" data-beat="13">13</button>
+          <button class="col14" data-instrument="hihat" data-beat="14">14</button>
+          <button class="col15" data-instrument="hihat" data-beat="15">15</button>
+          <button class="col16" data-instrument="hihat" data-beat="16">16</button>
+
+          <!-- Clap -->
+          <div class="col00" data-instrument="clap">Clap</div>
+          <button class="col01" data-instrument="clap" data-beat="1">1</button>
+          <button class="col02" data-instrument="clap" data-beat="2">2</button>
+          <button class="col03" data-instrument="clap" data-beat="3">3</button>
+          <button class="col04" data-instrument="clap" data-beat="4">4</button>
+          <button class="col05" data-instrument="clap" data-beat="5">5</button>
+          <button class="col06" data-instrument="clap" data-beat="6">6</button>
+          <button class="col07" data-instrument="clap" data-beat="7">7</button>
+          <button class="col08" data-instrument="clap" data-beat="8">8</button>
+          <button class="col09" data-instrument="clap" data-beat="9">9</button>
+          <button class="col10" data-instrument="clap" data-beat="10">10</button>
+          <button class="col11" data-instrument="clap" data-beat="11">11</button>
+          <button class="col12" data-instrument="clap" data-beat="12">12</button>
+          <button class="col13" data-instrument="clap" data-beat="13">13</button>
+          <button class="col14" data-instrument="clap" data-beat="14">14</button>
+          <button class="col15" data-instrument="clap" data-beat="15">15</button>
+          <button class="col16" data-instrument="clap" data-beat="16">16</button>
+
+          <!-- Column Numbers -->
+          <div class="col00 footer">&nbsp;</div>
+          <div class="col01 footer" id="col1" class="column-number">1</div>
+          <div class="col02 footer" id="col2" class="column-number">2</div>
+          <div class="col03 footer" id="col3" class="column-number">3</div>
+          <div class="col04 footer" id="col4" class="column-number">4</div>
+          <div class="col05 footer" id="col5" class="column-number">5</div>
+          <div class="col06 footer" id="col6" class="column-number">6</div>
+          <div class="col07 footer" id="col7" class="column-number">7</div>
+          <div class="col08 footer" id="col8" class="column-number">8</div>
+          <div class="col09 footer" id="col9" class="column-number">9</div>
+          <div class="col10 footer" id="col10" class="column-number">10</div>
+          <div class="col11 footer" id="col11" class="column-number">11</div>
+          <div class="col12 footer" id="col12" class="column-number">12</div>
+          <div class="col13 footer" id="col13" class="column-number">13</div>
+          <div class="col14 footer" id="col14" class="column-number">14</div>
+          <div class="col15 footer" id="col15" class="column-number">15</div>
+          <div class="col16 footer" id="col16" class="column-number">16</div>
+
+        </div><!-- /.grid -->
+      </div><!-- /.sequencer -->
+    </main>
+
+  </body>
+
+  <script src="scripts/Tone.js"></script>
+  <script src="app.js"></script>
+</html>

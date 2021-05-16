@@ -1,0 +1,173 @@
+@import url('https://fonts.googleapis.com/css?family=Quicksand:400,700&display=swap');
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Quicksand', sans-serif;
+  padding: 0;
+  margin: 0;
+  text-align: center;
+  color: white;
+  background-color: #4a5569;
+  font-size: 16px;
+}
+
+header.page {
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+header.page h1 {
+  text-transform: uppercase;
+  font-size: 2.0em;
+}
+
+main.handset {
+  margin: 0px auto;
+  max-width: 1024px;
+}
+
+div.sequencer {
+  max-width: 1024px;
+  margin: 10px;
+}
+
+/* Sequencer Header */
+
+div.sequencer header {
+  display: flex;
+  align-items: center;
+  padding-right: 10px;
+  background-color: #2d3848;
+}
+
+div.sequencer label.bpm {
+  display: inline-block;
+  flex-shrink: 0;
+  padding: 0px 10px;
+}
+
+div.sequencer div.bpm {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+}
+
+div.sequencer div.transport {
+  display: flex;
+}
+
+div.sequencer div.transport img {
+  display: inline-block;
+  height: 24px;
+  width: 24px;
+}
+
+div.sequencer button.transport-control {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Quicksand', sans-serif;
+  cursor: pointer;
+  border: 2px solid transparent;
+  background-color: #fff;
+  color: #000;
+  font-size: 16px;
+  padding: 12px;
+  margin: 8px;
+  height: 44px;
+  width: 44px;
+  border-radius: 0px;
+  outline-style: none;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.3);
+}
+
+div.sequencer header div.bpm input.bpm {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 2px;
+  background: #fff;
+  outline: none;
+}
+
+div.sequencer header div.bpm input[type=range]::-webkit-slider-thumb {
+  height: 20px;
+  width: 20px;
+  border-radius: 20px;
+  background: #FFFFFF;
+  cursor: pointer;
+  -webkit-appearance: none;
+}
+
+div.sequencer-button-grid {
+  display: grid;
+  grid-template-columns: min-content repeat(16, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  grid-column-gap: 2px;
+  grid-row-gap: 2px;
+}
+
+div.sequencer-button-grid div.col00 {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-content: left;
+  height: 44px;
+  padding: 10px;
+  background-color: #65707e;
+  white-space: nowrap;
+  font-size: 0.8em;
+  user-select: none;
+  cursor: pointer;
+}
+
+div.sequencer-button-grid button {
+  font-size: 0.0em;
+  border-radius: 0px;
+  outline-style: none;
+  border: none;
+  background-color: #65707e;
+  cursor: pointer;
+}
+
+div.sequencer-button-grid button.col01,
+div.sequencer-button-grid button.col05,
+div.sequencer-button-grid button.col09,
+div.sequencer-button-grid button.col13 {
+  background-color: #606b79;
+}
+
+div.sequencer-button-grid button.active {
+  background-color: #35cac5;
+}
+
+div.sequencer-button-grid div.footer {
+  margin-top: 5px;
+  font-size: 0.75em;
+  padding-top: 5px;
+  background-color: transparent !important;
+  cursor: default;
+  user-select: none;
+  height: 25px;
+}
+
+div.sequencer-button-grid div.footer.active {
+  background-color: #35cac5 !important;
+  border-radius: 5px;
+}
+
+@media only screen and (min-width: 500px) {
+  div.sequencer-button-grid div.col00 {
+    font-size: 1.1em;
+    padding: 0px 25px;
+    height: 50px;
+  }
+  div.sequencer-button-grid div.footer {
+    font-size: 1.0em;
+    height: 30px;
+  }
+}
