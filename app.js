@@ -1,6 +1,6 @@
 const kickSound = './sounds/kick.wav';
-const clapSound = './sounds/Clap.ogg';
-const closedHatSound = './sounds/ClosedHat.ogg';
+const clapSound = './sounds/clap.wav';
+const closedHatSound = './sounds/closed-hat.wav';
 const snareSound = './sounds/snare.wav';
 
 class DrumMachine {
