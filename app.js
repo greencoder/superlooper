@@ -1,20 +1,16 @@
-const kickSound = './sounds/kick.wav';
-const clapSound = './sounds/clap.wav';
-const closedHatSound = './sounds/closed-hat.wav';
-const snareSound = './sounds/snare.wav';
-
 class DrumMachine {
 
-  constructor() {
+  constructor(playTick) {
     this.reverbLevel = 1;
     this.currentBeat = 0;
     this.setupInstruments();
     this.initializeSequencer();
     this.setTempo(100);
     this.isPlaying = false;
+    this.playTick = playTick;
 
     // Schedule a callback for each beat
-    Tone.Transport.scheduleRepeat(this.step.bind(this), '16n');
+    Tone.Transport.scheduleRepeat(this.repeat.bind(this), '16n');
   }
 
   // Sets the appropriate tempo
@@ -33,38 +29,52 @@ class DrumMachine {
       shaker: Array.apply(null, {length: 16}).map(() => false),
       fing: Array.apply(null, {length: 16}).map(() => false),
       rim: Array.apply(null, {length: 16}).map(() => false),
-      tom: Array.apply(null, {length: 16}).map(() => false)
+      tom: Array.apply(null, {length: 16}).map(() => false),
+      tick: Array.apply(null, {length: 16}).map(() => false)
     }
   }
 
   // Create a player for each instrument
   setupInstruments() {
     this.instruments = {
-      kick: new Tone.Player(kickSound).toDestination(),
-      snare: new Tone.Player(snareSound).toDestination(),
-      hihat: new Tone.Player(closedHatSound).toDestination(),
-      clap: new Tone.Player(clapSound).toDestination(),
-      shaker: new Tone.Player('./sounds/shaker-bis2.mp3').toDestination(),
-      fing: new Tone.Player('./sounds/fingerWide-bis2.mp3').toDestination(),
-      rim: new Tone.Player('./sounds/rim1-bis2.mp3').toDestination(),
-      tom: new Tone.Player('./sounds/tomDry3-bis2.mp3').toDestination()
+      kick: 'kick.wav',
+      snare: 'snare.wav',
+      hihat: 'closed-hat.wav',
+      clap: 'clap.wav',
+      shaker: 'shaker-bis2.mp3',
+      fing: 'fingerWide-bis2.mp3',
+      rim: 'rim1-bis2.mp3',
+      tom: 'tomDry3-bis2.mp3',
+      tick: 'tick.wav'
     }
 
+    this.players = new Tone.Players({
+      urls: this.instruments,
+      baseUrl: './sounds/'
+    });
+
+    this.players.toDestination();
+    this.synth = new Tone.Synth().toDestination();
+
     // Chain reverb to some of the channels
-    const reverb = new Tone.Reverb(this.reverbLevel);
-    this.instruments['kick'].chain(reverb, Tone.Destination);
-    this.instruments['snare'].chain(reverb, Tone.Destination);
-    this.instruments['hihat'].chain(reverb, Tone.Destination);
+    // const reverb = new Tone.Reverb(this.reverbLevel);
+    // this.players.player('kick').chain(reverb, Tone.Destination);
+    // this.players.player('snare').chain(reverb, Tone.Destination);
+    // this.players.player('hihat').chain(reverb, Tone.Destination);
   }
 
   // This is the callback that's called for each step of the sequencer
-  step() {
+  repeat(time) {
     let step = this.currentBeat % 16;
 
     for (let instrument of Object.keys(this.instruments)) {
-      if (this.sequencer[instrument][step+1] === true) {
-        this.instruments[instrument].start();
+      if (this.sequencer[instrument][step + 1] === true) {
+        this.players.player(instrument).start(time).stop(time + 0.1);
       }
+    }
+
+    if (this.playTick) {
+      this.synth.triggerAttackRelease('C3', '8n', time);
     }
 
     this.updateColumnHighlights(step);
@@ -80,6 +90,15 @@ class DrumMachine {
   // Makes sure none of the column numbers are highlighted
   resetColumnHighlights() {
     document.querySelectorAll('div.footer').forEach(span => span.classList.remove('active'));
+  }
+
+  // Handle the user clicking the clear button
+  onClearGrid() {
+    this.currentBeat = 0;
+    Tone.Transport.stop();
+    this.resetColumnHighlights();
+    this.isPlaying = false;
+    this.initializeSequencer();
   }
 
   // Handle the user clicking the rewind button
@@ -101,9 +120,12 @@ class DrumMachine {
     let beatNumber = parseInt(beat);
     let beatActive = this.sequencer[instrument][beatNumber];
 
-    // If the beat is not active, play the sound once
+    // Sample the beat unless we are playing
+    if (!this.isPlaying) {
+      this.players.player(instrument).start();
+    }
+
     if (!beatActive) {
-      this.instruments[instrument].start();
       this.sequencer[instrument][beatNumber] = true;
     }
     else {
@@ -113,14 +135,19 @@ class DrumMachine {
 
   // Plays the sound once
   playSound(instrument) {
-    this.instruments[instrument].start();
+    this.players.player(instrument).start();
   }
 }
 
 // All the UI stuff happens down here
 
 document.addEventListener('DOMContentLoaded', () => {
-  let drumMachine = new DrumMachine();
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const playTick = urlParams.get('tick');
+
+  let drumMachine = new DrumMachine(playTick);
+  window.drumMachine = drumMachine;
 
   // Bind the BPM slider to the current tempo and update the tempo label
   document.querySelector('input.bpm').value = drumMachine.tempo;
@@ -174,4 +201,13 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   });
+
+  // Clear button
+  document.querySelector('button#clear').addEventListener('click', () => {
+    drumMachine.onClearGrid();
+    document.querySelectorAll('div.sequencer-button-grid button').forEach(button => {
+      button.classList.remove('active')
+    });
+  });
+
 });
