@@ -155,18 +155,25 @@ class DrumMachine {
 
 // All the UI stuff happens down here
 
+function parseUrlSequence(key) {
+  const urlParams = new URLSearchParams(window.location.search);
+  let value = urlParams.get(key) || '0000';
+  return hex2bin(value);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
 
   // Read the configuration from the querystring (if present)
   const urlParams = new URLSearchParams(window.location.search);
+
   const tempo = urlParams.get('tempo') || 100;
-  const kick = urlParams.get('kick') || '0000000000000000';
-  const snare = urlParams.get('snare') || '0000000000000000';
-  const ohat = urlParams.get('ohat') || '0000000000000000';
-  const chat = urlParams.get('chat') || '0000000000000000';
-  const snap = urlParams.get('snap') || '0000000000000000';
-  const clap = urlParams.get('clap') || '0000000000000000';
-  const tom = urlParams.get('tom') || '0000000000000000';
+  const kick = this.parseUrlSequence('kick');
+  const snare = this.parseUrlSequence('snare');
+  const ohat = this.parseUrlSequence('ohat');
+  const chat = this.parseUrlSequence('chat');
+  const snap = this.parseUrlSequence('snap');
+  const clap = this.parseUrlSequence('clap');
+  const tom = this.parseUrlSequence('tom');
 
   let drumMachine = new DrumMachine(tempo, kick, snare, ohat, chat, clap, snap, tom);
   window.drumMachine = drumMachine;
@@ -200,7 +207,8 @@ document.addEventListener('DOMContentLoaded', () => {
       url.searchParams.delete(instrument);
     }
     else {
-      url.searchParams.set(instrument, urlSequence);
+      let hex = bin2hex(urlSequence);
+      url.searchParams.set(instrument, hex);
     }
 
     window.history.pushState({}, '', url);
@@ -258,3 +266,17 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
 });
+
+// Convert a binary string to hexidecimal
+function bin2hex(b) {
+  return b.match(/.{4}/g).reduce(function(acc, i) {
+      return acc + parseInt(i, 2).toString(16);
+  }, '')
+}
+
+// Convert a hexidecimal string to binary
+function hex2bin(h) {
+  return h.split('').reduce(function(acc, i) {
+      return acc + ('000' + parseInt(i, 16).toString(2)).substr(-4, 4);
+  }, '')
+}
