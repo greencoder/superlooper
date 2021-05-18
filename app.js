@@ -1,15 +1,14 @@
 class DrumMachine {
 
-  constructor(playTick) {
-    this.reverbLevel = 1;
+  constructor(tempo, kick, snare, ohat, chat, clap, snap, tom) {
     this.currentBeat = 0;
     this.setupInstruments();
-    this.initializeSequencer();
-    this.setTempo(100);
+    this.initializeSequencer(kick, snare, ohat, chat, clap, snap, tom);
+    this.setupInterface();
+    this.setTempo(tempo);
     this.isPlaying = false;
-    this.playTick = playTick;
 
-    // Schedule a callback for each beat
+    // Schedules a callback for each beat
     Tone.Transport.scheduleRepeat(this.repeat.bind(this), '16n');
   }
 
@@ -20,18 +19,28 @@ class DrumMachine {
   }
 
   // Create empty arrays with false values for the instrument sequences
-  initializeSequencer() {
-    this.sequencer = {
-      kick: Array.apply(null, {length: 16}).map(() => false),
-      snare: Array.apply(null, {length: 16}).map(() => false),
-      hihat: Array.apply(null, {length: 16}).map(() => false),
-      clap: Array.apply(null, {length: 16}).map(() => false),
-      shaker: Array.apply(null, {length: 16}).map(() => false),
-      fing: Array.apply(null, {length: 16}).map(() => false),
-      rim: Array.apply(null, {length: 16}).map(() => false),
-      tom: Array.apply(null, {length: 16}).map(() => false),
-      tick: Array.apply(null, {length: 16}).map(() => false)
+  initializeSequencer(kick, snare, ohat, chat, clap, snap, tom) {
+    this.sequencer = {}
+    this.sequencer.kick = this.parseInstrumentParam(kick);
+    this.sequencer.snare = this.parseInstrumentParam(snare);
+    this.sequencer.ohat = this.parseInstrumentParam(ohat);
+    this.sequencer.chat = this.parseInstrumentParam(chat);
+    this.sequencer.clap = this.parseInstrumentParam(clap);
+    this.sequencer.snap = this.parseInstrumentParam(snap);
+    this.sequencer.tom = this.parseInstrumentParam(tom);
+  }
+
+  // Parses the querystring param into a sequence of 16 beats
+  parseInstrumentParam(param) {
+    let sequence = Array.apply(null, {length: 16}).map(() => false);
+
+    if (param) {
+      param.split('').slice(0,16).forEach((beat, index) => {
+        sequence[index] = beat === '1';
+      });
     }
+
+    return sequence;
   }
 
   // Create a player for each instrument
@@ -39,13 +48,11 @@ class DrumMachine {
     this.instruments = {
       kick: 'kick.wav',
       snare: 'snare.wav',
-      hihat: 'closed-hat.wav',
+      chat: 'closed-hat.wav',
+      ohat: 'open-hat.wav',
       clap: 'clap.wav',
-      shaker: 'shaker-bis2.mp3',
-      fing: 'fingerWide-bis2.mp3',
-      rim: 'rim1-bis2.mp3',
-      tom: 'tomDry3-bis2.mp3',
-      tick: 'tick.wav'
+      snap: 'snap.wav',
+      tom: 'tom.wav'
     }
 
     this.players = new Tone.Players({
@@ -54,13 +61,21 @@ class DrumMachine {
     });
 
     this.players.toDestination();
-    this.synth = new Tone.Synth().toDestination();
+  }
 
-    // Chain reverb to some of the channels
-    // const reverb = new Tone.Reverb(this.reverbLevel);
-    // this.players.player('kick').chain(reverb, Tone.Destination);
-    // this.players.player('snare').chain(reverb, Tone.Destination);
-    // this.players.player('hihat').chain(reverb, Tone.Destination);
+  setupInterface() {
+    document.querySelectorAll('div.sequencer-button-grid button').forEach(button => {
+      let instrument = button.dataset.instrument;
+      let beatNumber = button.dataset.beat;
+      let beatActive = this.sequencer[instrument][beatNumber-1];
+
+      if (beatActive === true) {
+        button.classList.add('active');
+      }
+      else {
+        button.classList.remove('active');
+      }
+    });
   }
 
   // This is the callback that's called for each step of the sequencer
@@ -68,13 +83,11 @@ class DrumMachine {
     let step = this.currentBeat % 16;
 
     for (let instrument of Object.keys(this.instruments)) {
-      if (this.sequencer[instrument][step + 1] === true) {
-        this.players.player(instrument).start(time).stop(time + 0.1);
-      }
-    }
+      let beatActive = this.sequencer[instrument][step];
 
-    if (this.playTick) {
-      this.synth.triggerAttackRelease('C3', '8n', time);
+      if (beatActive === true) {
+        this.players.player(instrument).start(time).stop(time + 0.3);
+      }
     }
 
     this.updateColumnHighlights(step);
@@ -99,6 +112,7 @@ class DrumMachine {
     this.resetColumnHighlights();
     this.isPlaying = false;
     this.initializeSequencer();
+    this.setupInterface();
   }
 
   // Handle the user clicking the rewind button
@@ -117,7 +131,7 @@ class DrumMachine {
 
   // If a beat is selected, it deselects it (and vice-versa)
   toggleBeat(instrument, beat) {
-    let beatNumber = parseInt(beat);
+    let beatNumber = parseInt(beat) - 1;
     let beatActive = this.sequencer[instrument][beatNumber];
 
     // Sample the beat unless we are playing
@@ -143,10 +157,18 @@ class DrumMachine {
 
 document.addEventListener('DOMContentLoaded', () => {
 
+  // Read the configuration from the querystring (if present)
   const urlParams = new URLSearchParams(window.location.search);
-  const playTick = urlParams.get('tick');
+  const tempo = urlParams.get('tempo') || 100;
+  const kick = urlParams.get('kick') || '0000000000000000';
+  const snare = urlParams.get('snare') || '0000000000000000';
+  const ohat = urlParams.get('ohat') || '0000000000000000';
+  const chat = urlParams.get('chat') || '0000000000000000';
+  const snap = urlParams.get('snap') || '0000000000000000';
+  const clap = urlParams.get('clap') || '0000000000000000';
+  const tom = urlParams.get('tom') || '0000000000000000';
 
-  let drumMachine = new DrumMachine(playTick);
+  let drumMachine = new DrumMachine(tempo, kick, snare, ohat, chat, clap, snap, tom);
   window.drumMachine = drumMachine;
 
   // Bind the BPM slider to the current tempo and update the tempo label
@@ -164,9 +186,25 @@ document.addEventListener('DOMContentLoaded', () => {
       let instrument = evt.target.dataset.instrument;
       let beat = evt.target.dataset.beat;
       drumMachine.toggleBeat(instrument, beat);
+      let sequence = drumMachine.sequencer[instrument];
+      updateQueryString(instrument, sequence);
       evt.target.classList.toggle('active');
     });
   });
+
+  function updateQueryString(instrument, sequence) {
+    let urlSequence = sequence.map(beat => Number(beat)).join('');
+    let url = new URL(window.location);
+
+    if (urlSequence === '0000000000000000') {
+      url.searchParams.delete(instrument);
+    }
+    else {
+      url.searchParams.set(instrument, urlSequence);
+    }
+
+    window.history.pushState({}, '', url);
+  }
 
   // Change the image on the play/pause button
   function togglePlayPauseButton() {
@@ -204,10 +242,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Clear button
   document.querySelector('button#clear').addEventListener('click', () => {
+    let shouldClear = confirm('Are you sure you want to clear the grid?');
+    if (!shouldClear) return;
+
+    let url = new URL(window.location);
+    url.searchParams.delete('kick');
+    url.searchParams.delete('snare');
+    url.searchParams.delete('ohat');
+    url.searchParams.delete('ohat');
+    url.searchParams.delete('clap');
+    url.searchParams.delete('snap');
+    url.searchParams.delete('tom');
+    window.history.pushState({}, '', url);
     drumMachine.onClearGrid();
-    document.querySelectorAll('div.sequencer-button-grid button').forEach(button => {
-      button.classList.remove('active')
-    });
   });
 
 });
