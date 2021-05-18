@@ -265,6 +265,15 @@ document.addEventListener('DOMContentLoaded', () => {
     drumMachine.onClearGrid();
   });
 
+  // Spacebar should stop/start the playback
+  document.addEventListener('keyup', event => {
+    if (event.code === 'Space') {
+      event.preventDefault();
+      drumMachine.onStartStop();
+      togglePlayPauseButton();
+    }
+  });
+
 });
 
 // Convert a binary string to hexidecimal
